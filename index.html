@@ -25,52 +25,71 @@
 
     <section>
         <div class="container">
-            <canvas class="lcolcnv mb-5" id="machine">
+            <div class="row">
+                <div class="col-lg-8 col-sm-12">
+                    <div id="machine"></div>
+                </div>
 
-            </canvas>
+                <div class="col-lg-4 col-12">
+
+                    <h3>Строка состояния:</h3>
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>Компрессор:</td>
+                            <td colspan="2" class="text-center" id="compressAlert">выключен</td>
+                        </tr>
+                        <tr>
+                            <td>Клапан:</td>
+                            <td colspan="2" class="text-center" id="valveAlert">закрыт</td>
+                        </tr>
+                        <tr>
+                            <td>Давление в системе:</td>
+                            <td class="text-center" id="pressureAlert">760</td>
+                            <td>мм.рт.ст.</td>
+                        </tr>
+                    </table>
+                </div>
+                    
+            </div>
         </div>
     </section>
 
-
-    <section class="bg2 text-color1 p-4">
+    <section>
         <div class="container">
-            <div class="row">
-                <div class="col-12 text-center">
-                    Design and developer: Happy Crez / Владимир Горбунов ПИ-24
+            <div class="row text-center m-5">
+                <div class="col-lg-4 col-12 mb-4">
+                    <div class="btn btn-primary" id="turnOnOffCompress">Переключить компрессор</div>
+                </div>
+                <div class="col-lg-4 col-12 mb-4">
+                    <div class="btn btn-primary" id="openTheValve">Открыть/Закрыть клапан</div>
+                </div>
+                <div class="col-lg-4 col-12 mb-4">
+                    <div class="btn btn-primary" id="dropThePressure">Резко сбросить давление</div>
                 </div>
             </div>
         </div>
     </section>
 
-    
 
-    <script type="text/javascript" src="js/backend.js"></script>
-    <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="js/jsc3d.touch.js"></script>
-    <script type="text/javascript" src="js/jsc3d.js" ></script>
-<script type="text/javascript" src="js/jsc3d.ctm.js" ></script>
-<script type="text/javascript" src="js/jsc3d.webgl.js" ></script>
-<script type="text/javascript" src="js/jquery.js" ></script>
 
-<script type="text/javascript">
-    var viewer = new JSC3D.Viewer(document.getElementById('machine'));        
-    viewer.setParameter('SceneUrl', 'source/monometr.stl');
-    viewer.setParameter('RenderMode', 'smooth');
-    viewer.setParameter('Renderer', 'webgl');
-    
-    viewer.setParameter('ModelColor', '#000000');
-    
-    
-    viewer.setParameter('InitRotationX', '280');
-    viewer.setParameter('InitRotationY', '-20');
-    viewer.setParameter('InitRotationZ', '-5');
-    
-    
-    viewer.setParameter('Background', 'off');
-    viewer.setParameter('Definition', 'high');
-    
-    viewer.init();  
-    viewer.update();
+<section class="bg2 text-color1 p-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                Design and developer: Happy Crez / Владимир Горбунов ПИ-24
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script src="js/three.js" ></script>
+<script type="module" src="js/GLTFLoader.js" ></script>
+<script type="module" src="./js/EditorControls.js"></script>
+<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+
+<script type="module" src="./js/backend.js"></script>
+
 </script>
 
 </body>
