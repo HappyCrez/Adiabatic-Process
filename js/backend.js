@@ -1,7 +1,6 @@
 import { GLTFLoader } from './GLTFLoader.js';
 import { EditorControls } from './EditorControls.js';
 
-
 const PI = 3.14;
 
 const posX = -0.7;
@@ -43,7 +42,7 @@ var arrowPosZ = posZ - 0.49;
 var arrow;
 var arrowAngle = -PI/2;
 
-loader.load('../source/MonometrArrow.gltf', function(gltf){
+loader.load('source/MonometrArrow.gltf', function(gltf){
     arrow = gltf.scene;
     scene.add(gltf.scene);
 
@@ -60,7 +59,7 @@ var turbinePosX = posX - 0.27;
 var turbinePosY = posY + 0.5;
 var turbinePosZ = -1.4;
 
-loader.load('../source/Turbine.gltf', function(gltf){
+loader.load('source/Turbine.gltf', function(gltf){
     turbine = gltf.scene;
     scene.add(gltf.scene);
 
@@ -70,7 +69,7 @@ loader.load('../source/Turbine.gltf', function(gltf){
 
 // Stand
 var stand;
-loader.load('../source/Stand.gltf', function(gltf){
+loader.load('source/Stand.gltf', function(gltf){
     stand = gltf.scene;
     scene.add(gltf.scene);
 
@@ -87,7 +86,7 @@ var valvePosZ = -0.54;
 
 const valveOpenPos = valvePosY + 0.15;
 const valveClosedPos = valvePosY;
-loader.load('../source/Valve.gltf', function(gltf){
+loader.load('source/Valve.gltf', function(gltf){
     valve = gltf.scene;
     scene.add(gltf.scene);
 
@@ -102,7 +101,7 @@ var buttonPosX = posX + 2.2;
 var buttonPosY = posY + 0.8;
 var buttonPosZ = posZ - 0.75;
 
-loader.load('../source/Switch.gltf', function(gltf){
+loader.load('source/Switch.gltf', function(gltf){
     Button = gltf.scene;
     scene.add(gltf.scene);
     
@@ -120,7 +119,7 @@ var togglePosZ = buttonPosZ;
 const  toggleOn = buttonPosY + 0.215;
 const  toggleOff = buttonPosY + 0.01;
 
-loader.load('../source/Switcher.gltf', function(gltf){
+loader.load('source/Switcher.gltf', function(gltf){
     toggle = gltf.scene;
     scene.add(gltf.scene);
 
@@ -182,13 +181,13 @@ const compressOffSound = new THREE.Audio( listener );
 
 // load a sound and set it as the Audio object's buffer
 const audioLoader = new THREE.AudioLoader();
-audioLoader.load( '../source/compressOn.wav', function( buffer ) {
+audioLoader.load( 'source/compressOn.wav', function( buffer ) {
 	compressOnSound.setBuffer( buffer );
 	compressOnSound.setLoop( true );
 	compressOnSound.setVolume( 0.3 );
 });
 
-audioLoader.load( '../source/compressOff.mp3', function( buffer ) {
+audioLoader.load( 'source/compressOff.mp3', function( buffer ) {
 	compressOffSound.setBuffer( buffer );
 	compressOffSound.setLoop( true );
 	compressOffSound.setVolume( 0.3 );
@@ -295,6 +294,5 @@ function animate() {
     }
 
 }
-
 
 animate();
