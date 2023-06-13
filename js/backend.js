@@ -9,6 +9,14 @@ const posZ = 0;
 
 const rotationX = PI/2;
 
+var valuePhisic = 100, // const value
+    pressurePhisic1 = 760,
+    pressurePhisic2,
+    pressurePhisic3,
+    tempraturePhisyc = 297,
+    temperaturePhisyc2,
+    coef = 0.2857; // Farengate
+
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(
     75,
@@ -22,7 +30,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 var canvas = document.getElementById('machine').appendChild(renderer.domElement);
 
 // Button on/off compressor
-var compressSwitch = false;
+var isCompressOn = false;
 
 // Button Drop Pressure
 var valveSwitch = false;
@@ -84,7 +92,7 @@ var valvePosX = posX + 0.25;
 var valvePosY = posY + 1.4;
 var valvePosZ = -0.54;
 
-const valveOpenPos = valvePosY + 0.15;
+const valveOpenPos = valvePosY + 0.07;
 const valveClosedPos = valvePosY;
 loader.load('source/Valve.gltf', function(gltf){
     valve = gltf.scene;
@@ -135,9 +143,9 @@ document.getElementById('turnOnOffCompress').onclick = function() {
 }
 
 function switchButton() {
-    compressSwitch = !compressSwitch;
+    isCompressOn = !isCompressOn;
     setCompressAlert();
-    if (compressSwitch) {
+    if (isCompressOn) {
         compressOnSound.play();
     }
     else {
@@ -150,7 +158,17 @@ document.getElementById('openTheValve').onclick = function() {
     valveSwitch = !valveSwitch;
     setValveAlert();
     switchSound();
-}   
+}
+
+
+var dropPress = false;
+document.getElementById('dropThePressure').onclick = function() {
+    // open Valve
+    dropPress = true;
+    setValveAlert();
+    switchSound();
+
+}
 
 function switchSound() {
     if (valveSwitch)
@@ -211,7 +229,7 @@ function getRandomNumber(min, max) {
 
 var compressAlert = document.getElementById("compressAlert");
 function setCompressAlert() {
-    if (compressSwitch)
+    if (isCompressOn)
         compressAlert.innerHTML = "включён";
     else 
         compressAlert.innerHTML = "выключён";
@@ -227,6 +245,7 @@ function setValveAlert() {
 
 var pressureAlert = document.getElementById("pressureAlert");
 function setPressureAlert(pressure) {
+    
     pressureAlert.innerHTML = pressure;
 }
 
@@ -241,13 +260,18 @@ function convertRadsToPressure(radians) {
     return Math.floor(radians * 57);
 }
 
+function convertPressureToRads(pressure) {
+    var radians = pressure / 57 - PI/2;
+    return Math.floor(radians);
+}
+
 // Actions
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
     
     // increase pressure 
-    if (compressSwitch) {
+    if (isCompressOn) {
         if (togglePosY <= toggleOn) {
             togglePosY += toogleSpeed;
             toggle.position.set( togglePosX, togglePosY, togglePosZ);
@@ -255,8 +279,11 @@ function animate() {
 
         else if (arrowAngle > -2 * PI -PI/5) {
             setPressureAlert(convertRadsToPressure(arrowAngle));
+
             arrowAngle -= getRandomNumber(0.01, 0.05);
             arrow.rotation.set( rotationX, arrowAngle, 0);
+
+            pressurePhisic2 = convertRadsToPressure(arrowAngle) + pressurePhisic1;
 
             turbineAngle += 0.1;
             turbine.rotation.set( turbineAngle, 0, 0);
@@ -270,10 +297,19 @@ function animate() {
         toggle.position.set( togglePosX, togglePosY, togglePosZ);
         
     }
+    else {
+        if (arrowAngle > convertPressureToRads(pressurePhisic3)) {
+
+            arrowAngle -= getRandomNumber(0.01, 0.05);
+            arrow.rotation.set( rotationX, arrowAngle, 0);
+        }
+    }
 
     //degrese pressure
     if (valveSwitch && arrowAngle <= -PI/2) {
+        
         setPressureAlert(convertRadsToPressure(arrowAngle));
+
         arrowAngle += getRandomNumber(0.01, 0.04);
         arrow.rotation.set( rotationX, arrowAngle, 0);
         if (valvePosY <= valveOpenPos) {
@@ -282,12 +318,34 @@ function animate() {
             valve.rotation.set( rotationX, 0, 0);
         }
     }
+
+    else if (dropPress && arrowAngle <= -PI/2) {
+        setPressureAlert(convertRadsToPressure(arrowAngle));
+
+        arrowAngle += getRandomNumber(0.08, 0.1);
+        arrow.rotation.set( rotationX, arrowAngle, 0);
+
+        if (valvePosY <= valveOpenPos) {
+            valvePosY += 0.03;
+            valve.position.set(valvePosX, valvePosY, valvePosZ);
+            valve.rotation.set( rotationX, 0, 0);
+        }
+    }
+
     else {
+        if (dropPress) {
+            temperaturePhisyc2 = tempraturePhisyc / Math.pow(( pressurePhisic2 / pressurePhisic1), coef);
+            pressurePhisic3 = (pressurePhisic1 * tempraturePhisyc) / temperaturePhisyc2 - pressurePhisic1;
+            pressurePhisic3 += Math.random() * 5 - 5; // +- 2.5 accurancy
+            pressureAlert.innerHTML = Math.trunc(pressurePhisic3);
+
+        }
+        dropPress = false;
         valveSwitch = false;
         setValveAlert();
         switchSound();
         if (valvePosY > valveClosedPos) {
-            valvePosY -= 0.01;
+            valvePosY -= 0.04;
             valve.position.set(valvePosX, valvePosY, valvePosZ);
             valve.rotation.set( rotationX, 0, 0);
         }
