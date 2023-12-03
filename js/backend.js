@@ -233,7 +233,6 @@ function setCompressAlert() {
 
 var pressureAlert = document.getElementById("pressureAlert");
 function setPressureAlert(pressure) {
-    
     pressureAlert.innerHTML = pressure;
 }
 
@@ -255,10 +254,15 @@ function convertPressureToRads(pressure) {
 
 var preessureAtDegrees = 0;
 
+let frameTime = Date.now(); 
 // Actions
+
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
+
+    let delta = Date.now() - frameTime;
+    frameTime = Date.now();
     
     // increase pressure 
     if (isCompressOn) {
@@ -270,7 +274,7 @@ function animate() {
         else if (arrowAngle > -2 * PI -PI/5) {
             setPressureAlert(convertRadsToPressure(arrowAngle));
 
-            arrowAngle -= getRandomNumber(0.01, 0.04);
+            arrowAngle -= delta * getRandomNumber(0.0001, 0.0004);
             arrow.rotation.set( rotationX, arrowAngle, 0);
 
             pressurePhisic2 = convertRadsToPressure(arrowAngle) + pressurePhisic1;
@@ -288,11 +292,8 @@ function animate() {
         
     }
 
-    // pressure increes //
-    console.log( arrowAngle + "  " + preessureAtDegrees);
-    
     if (!dropPress && !isCompressOn && arrowAngle > preessureAtDegrees) {
-        arrowAngle -= getRandomNumber(0.01, 0.05);
+        arrowAngle -= delta * getRandomNumber(0.0001, 0.0005);
         arrow.rotation.set( rotationX, arrowAngle, 0);
         setPressureAlert(convertRadsToPressure(arrowAngle));
     }
@@ -308,7 +309,7 @@ function animate() {
             }
             else {
                 setPressureAlert(convertRadsToPressure(arrowAngle));
-                arrowAngle += getRandomNumber(0.09, 0.12);
+                arrowAngle += delta * getRandomNumber(0.0009, 0.0012);
                 arrow.rotation.set( rotationX, arrowAngle, 0);
             }
         }
@@ -319,7 +320,7 @@ function animate() {
 
             temperaturePhisyc2 = tempraturePhisyc / Math.pow(( pressurePhisic2 / pressurePhisic1), coef);
             pressurePhisic3 = (pressurePhisic1 * tempraturePhisyc) / temperaturePhisyc2 - pressurePhisic1;
-            // +- 3 error //
+            // +- 3 погрешность //
             pressurePhisic3 += getRandomNumber(-3, 3);
 
             preessureAtDegrees = convertPressureToRads(pressurePhisic3);
@@ -339,5 +340,4 @@ function animate() {
     }
 
 }
-
 animate();
