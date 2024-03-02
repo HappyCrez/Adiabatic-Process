@@ -9,7 +9,7 @@ const posZ = 0;
 
 const rotationX = PI/2;
 
-var valuePhisic = 100, // const value
+let valuePhisic = 100, // const value
     pressurePhisic1 = 760,
     pressurePhisic2,
     pressurePhisic3,
@@ -17,35 +17,59 @@ var valuePhisic = 100, // const value
     temperaturePhisyc2,
     coef = 0.2857; // Farengate
 
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(
+document.getElementById('instructionBtn').onclick = function() {
+    switchInstruction();
+}
+
+let isInstruction = false;
+const instruction = document.querySelector('.instruction');
+const laborator = document.querySelector('.laborator');
+
+function switchInstruction() {
+    isInstruction = !isInstruction;
+    if (isInstruction) showInstruction();
+    else hideInstruction();
+}
+
+function showInstruction() {
+    instruction.classList.remove('visually-hidden');
+    laborator.classList.add('visually-hidden');
+}
+
+function hideInstruction() {
+    instruction.classList.add('visually-hidden');
+    laborator.classList.remove('visually-hidden');
+}
+
+let scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
     .01,
     1000
 );
 
-var renderer = new THREE.WebGLRenderer();
+let renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
-var canvas = document.getElementById('machine').appendChild(renderer.domElement);
+let canvas = document.getElementById('machine').appendChild(renderer.domElement);
 
 // Button on/off compressor
-var isCompressOn = false;
+let isCompressOn = false;
 
 // LOAD OBJECTS
-var loader = new GLTFLoader();
+let loader = new GLTFLoader();
 
 
 // Monometr
-var monometr;
+let monometr;
 
-var arrowPosX = posX + 1.36;
-var arrowPosY = posY + 1.55;
-var arrowPosZ = posZ - 0.49;
+let arrowPosX = posX + 1.36;
+let arrowPosY = posY + 1.55;
+let arrowPosZ = posZ - 0.49;
 
 // Monometr Arrow
-var arrow;
-var arrowAngle = -PI/2;
+let arrow;
+let arrowAngle = -PI/2;
 
 loader.load('source/MonometrArrow.gltf', function(gltf){
     arrow = gltf.scene;
@@ -57,12 +81,12 @@ loader.load('source/MonometrArrow.gltf', function(gltf){
 });
 
 // Turbine
-var turbine;
-var turbineAngle = 0;
+let turbine;
+let turbineAngle = 0;
 
-var turbinePosX = posX - 0.27;
-var turbinePosY = posY + 0.5;
-var turbinePosZ = -1.4;
+let turbinePosX = posX - 0.27;
+let turbinePosY = posY + 0.5;
+let turbinePosZ = -1.4;
 
 loader.load('source/Turbine.gltf', function(gltf){
     turbine = gltf.scene;
@@ -73,7 +97,7 @@ loader.load('source/Turbine.gltf', function(gltf){
 });
 
 // Stand
-var stand;
+let stand;
 loader.load('source/Stand.gltf', function(gltf){
     stand = gltf.scene;
     scene.add(gltf.scene);
@@ -84,10 +108,10 @@ loader.load('source/Stand.gltf', function(gltf){
 
 
 // Valve
-var valve;
-var valvePosX = posX + 0.26;
-var valvePosY = posY + 1.45;
-var valvePosZ = -0.54;
+let valve;
+let valvePosX = posX + 0.26;
+let valvePosY = posY + 1.45;
+let valvePosZ = -0.54;
 
 const valveOpenPos = valvePosY + 0.03;
 const valveClosedPos = valvePosY;
@@ -100,11 +124,11 @@ loader.load('source/Valve.gltf', function(gltf){
 });
 
 // Switch object
-var Button;
+let Button;
 
-var buttonPosX = posX + 2.2;
-var buttonPosY = posY + 0.8;
-var buttonPosZ = posZ - 0.75;
+let buttonPosX = posX + 2.2;
+let buttonPosY = posY + 0.8;
+let buttonPosZ = posZ - 0.75;
 
 loader.load('source/Switch.gltf', function(gltf){
     Button = gltf.scene;
@@ -114,12 +138,12 @@ loader.load('source/Switch.gltf', function(gltf){
     Button.rotation.set( rotationX, 0, 0);
 });
 
-var toggle;
+let toggle;
 const toogleSpeed = 0.03;
 
-var togglePosX = buttonPosX;
-var togglePosY = buttonPosY;
-var togglePosZ = buttonPosZ;
+let togglePosX = buttonPosX;
+let togglePosY = buttonPosY;
+let togglePosZ = buttonPosZ;
 
 const  toggleOn = buttonPosY + 0.215;
 const  toggleOff = buttonPosY + 0.01;
@@ -148,7 +172,7 @@ function switchButton() {
     }
 }
 
-var dropPress = false;
+let dropPress = false;
 document.getElementById('dropThePressure').onclick = function() {
     // open Valve
     dropPress = true;
@@ -157,7 +181,7 @@ document.getElementById('dropThePressure').onclick = function() {
 }
 
 
-var valveAlert = document.getElementById("valveAlert");
+let valveAlert = document.getElementById("valveAlert");
 function setValveAlert() {
     if (dropPress)
         valveAlert.innerHTML = 'открыт';
@@ -178,7 +202,7 @@ function switchSound() {
 camera.position.set( 0, 0, 2);
 camera.rotation.set( 0, 0, 0);
 
-var light = new THREE.DirectionalLight(0xffffff, 0.5);
+let light = new THREE.DirectionalLight(0xffffff, 0.5);
 light.position.setScalar(10);
 scene.add(light);
 scene.add(new THREE.AmbientLight(0xffffff, 0.5));
@@ -208,10 +232,10 @@ audioLoader.load( 'source/compressOff.mp3', function( buffer ) {
 });
 
 // Controls
-var controls = new EditorControls( camera, renderer.domElement);
+let controls = new EditorControls( camera, renderer.domElement);
 
 
-var mouse = new THREE.Vector2();
+let mouse = new THREE.Vector2();
 
 
 // mouse listener
@@ -223,7 +247,7 @@ function getRandomNumber(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-var compressAlert = document.getElementById("compressAlert");
+let compressAlert = document.getElementById("compressAlert");
 function setCompressAlert() {
     if (isCompressOn)
         compressAlert.innerHTML = "включён";
@@ -231,7 +255,7 @@ function setCompressAlert() {
         compressAlert.innerHTML = "выключён";
 }
 
-var pressureAlert = document.getElementById("pressureAlert");
+let pressureAlert = document.getElementById("pressureAlert");
 function setPressureAlert(pressure) {
     pressureAlert.innerHTML = pressure;
 }
@@ -248,11 +272,11 @@ function convertRadsToPressure(radians) {
 }
 
 function convertPressureToRads(pressure) {
-    var radians = -(pressure / 57) - PI/2;
+    let radians = -(pressure / 57) - PI/2;
     return radians;
 }
 
-var preessureAtDegrees = 0;
+let preessureAtDegrees = 0;
 
 let frameTime = Date.now(); 
 // Actions

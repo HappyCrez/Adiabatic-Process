@@ -12,6 +12,19 @@ body{
     background-color: #fff;
 }
 
+.header-info {
+    display: block;
+    margin: 0 15px;
+}
+
+.header-button {
+    text-align: left;
+}
+
+.instructionBtn {
+    width: 140px!important;
+}
+
 .bg1{
     background-color: var(--main_light_color);
 }

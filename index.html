@@ -15,13 +15,44 @@
         <div class="container pt-5">
             <div class="row">
                 <div class="col">
-                  <h1>Адиабатический процесс</h1>  
+                    <div class="header-info">
+                      <div class="header-text">
+                          <h1>Адиабатический процесс</h1>  
+                      </div>
+                      <div class="header-button">
+                            <button class="btn btn-primary" id="instructionBtn">Инструкция</button>
+                      </div>
+                    </div>
                   <hr>
                 </div>
             </div>
         </div>
     </header>
-    <section>
+
+    <section class="instruction visually-hidden"> 
+        <div class="container">
+            <div class="instruct_block">
+                <ul class="list-group list-group-flush mb-5">
+                    <li class="list-group-item">При закрытом клапане накачать воздух в сосуд так, чтобы измеряемое манометром избыточное давление стало
+                        равным 100 – 130 мм. рт. ст.</li>
+                    <li class="list-group-item">Через некоторое время, когда давление перестанет падать, записать в таблицу величину давления ΔР<sub>1</sub></li>
+                    <li class="list-group-item">Открыть на мгновение клапан сосуда и, когда стрелка манометра упадет до нуля, быстро закрыть его. Через
+                        некоторое время, когда давление перестанет расти, записать величину давления ΔР<sub>3</sub> в таблицу</li>
+                    <li class="list-group-item">Повторить предыдущие пункты пять раз.</li>
+                    <li class="list-group-item">По формуле <img src="source/formula1.png" alt="image doesn't load"/> рассчитать коэффициент Пуассона для каждого опыта. Вычислить среднее значение
+                        коэффициента Пуассона γ<sub>ср</sub></li>
+                    <li class="list-group-item">Найти теоретическое значение коэффициента Пуассона теор для воздуха, считая его молекулы жесткими
+                        двухатомными (указание: воспользоваться определениями коэффициента Пуассона и молярных теплоемкостей при
+                        постоянном объеме и давлении)</li>
+                    <li class="list-group-item">равнить теоретическое и среднее экспериментальное значения коэффициента Пуассона, оценив величину
+                        относительного отклонения по формуле <img src="source/formula2.png" alt="image doesn't load"/></li>
+                    <img class="table text-center" src="source/table.png" alt="image doesn't load"/>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="laborator">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-sm-12">
@@ -46,30 +77,30 @@
                     </table>
                 </div>
             </div>
-        </div>
-    </section>
-    <section>
-        <div class="container">
             <div class="row text-center m-5">
                 <div class="col-lg-6 col-12 mb-4">
-                    <div class="btn btn-primary" id="turnOnOffCompress">Переключить компрессор</div>
+                    <div class="btn btn-primary" id="turnOnOffCompress">Вкл/выкл компрессор</div>
                 </div>
                 <div class="col-lg-6 col-12 mb-4">
-                    <div class="btn btn-primary" id="dropThePressure">Резко сбросить давление</div>
+                    <div class="btn btn-primary" id="dropThePressure">Сбросить давление</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="bg2 text-color1 p-4">
+    <footer class="bg2 text-color1 p-4">
         <div class="container">
             <div class="row">
-                <div class="col-12 text-center">
-                    Design and developer: Happy Crez / Владимир Горбунов ПИ-24
+                <div class="col-12 text-center fw-bold">
+                    Design and developer: Happy Crez / Владимир Горбунов ПИ-2X
+                    <br>
+                    Associate Professor: Романенко Вероника Викторовна
+                    <br>
+                    2024 г.
                 </div>
             </div>
         </div>
-    </section>
+    </footer>
 
 <script src="js/three.js" ></script>
 <script type="module" src="js/GLTFLoader.js" ></script>
