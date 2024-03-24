@@ -1,46 +1,12 @@
 import { GLTFLoader } from './GLTFLoader.js';
 import { EditorControls } from './EditorControls.js';
 
-const PI = 3.14;
+const posX = -0.7;          // Позиция установки в пространстве
+const posY = -1.2;          // по трем осям X,Y,Z
+const posZ = 0;             //
+const rotationX = Math.PI/2;// поворот по X
 
-const posX = -0.7;
-const posY = -1.2;
-const posZ = 0;
-
-const rotationX = PI/2;
-
-let valuePhisic = 100, // const value
-    pressurePhisic1 = 760,
-    pressurePhisic2,
-    pressurePhisic3,
-    tempraturePhisyc = 297,
-    temperaturePhisyc2,
-    coef = 0.2857; // Farengate
-
-document.getElementById('instructionBtn').onclick = function() {
-    switchInstruction();
-}
-
-let isInstruction = false;
-const instruction = document.querySelector('.instruction');
-const laborator = document.querySelector('.laborator');
-
-function switchInstruction() {
-    isInstruction = !isInstruction;
-    if (isInstruction) showInstruction();
-    else hideInstruction();
-}
-
-function showInstruction() {
-    instruction.classList.remove('visually-hidden');
-    laborator.classList.add('visually-hidden');
-}
-
-function hideInstruction() {
-    instruction.classList.add('visually-hidden');
-    laborator.classList.remove('visually-hidden');
-}
-
+// Окружение, настройка сцены: свет, камера, звук 
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera(
     75,
@@ -49,46 +15,71 @@ let camera = new THREE.PerspectiveCamera(
     1000
 );
 
+camera.position.set( 0, 0, 2);
+camera.rotation.set( 0, 0, 0);
+
+let light = new THREE.DirectionalLight(0xffffff, 0.5);
+light.position.setScalar(10);
+scene.add(light);
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+scene.background = new THREE.Color(0xffffff);
+
+const listener = new THREE.AudioListener();
+camera.add( listener );
+
+const compressOnSound = new THREE.Audio( listener );
+const compressOffSound = new THREE.Audio( listener );
+
+const audioLoader = new THREE.AudioLoader();
+
+audioLoader.load( 'source/compressOn.wav', function( buffer ) {
+	compressOnSound.setBuffer( buffer );
+	compressOnSound.setLoop( true );
+	compressOnSound.setVolume( 0.3 );
+});
+
+audioLoader.load( 'source/compressOff.mp3', function( buffer ) {
+	compressOffSound.setBuffer( buffer );
+	compressOffSound.setLoop( true );
+	compressOffSound.setVolume( 0.3 );
+});
+
 let renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
+
+let controls = new EditorControls( camera, renderer.domElement);
 let canvas = document.getElementById('machine').appendChild(renderer.domElement);
 
-// Button on/off compressor
-let isCompressOn = false;
-
-// LOAD OBJECTS
+// Загрузка объектов и задание их позиций
 let loader = new GLTFLoader();
 
-
-// Monometr
-let monometr;
-
+// Стрелка монометра
 let arrowPosX = posX + 1.36;
 let arrowPosY = posY + 1.55;
 let arrowPosZ = posZ - 0.49;
 
-// Monometr Arrow
 let arrow;
-let arrowAngle = -PI/2;
+let arrowAngleY = -Math.PI/2;
 
 loader.load('source/MonometrArrow.gltf', function(gltf){
     arrow = gltf.scene;
     scene.add(gltf.scene);
 
-    
     arrow.position.set( arrowPosX, arrowPosY, arrowPosZ);
-    arrow.rotation.set( rotationX, arrowAngle, 0);
+    arrow.rotation.set( rotationX, arrowAngleY, 0);
 });
 
-// Turbine
+// Турбина
 let turbine;
 let turbineAngle = 0;
+let turbineIsLoaded = false;
 
 let turbinePosX = posX - 0.27;
 let turbinePosY = posY + 0.5;
 let turbinePosZ = -1.4;
 
 loader.load('source/Turbine.gltf', function(gltf){
+    turbineIsLoaded = true;
     turbine = gltf.scene;
     scene.add(gltf.scene);
 
@@ -96,7 +87,7 @@ loader.load('source/Turbine.gltf', function(gltf){
     turbine.rotation.set( turbineAngle, 0, 0);
 });
 
-// Stand
+// Стенд
 let stand;
 loader.load('source/Stand.gltf', function(gltf){
     stand = gltf.scene;
@@ -107,14 +98,17 @@ loader.load('source/Stand.gltf', function(gltf){
 });
 
 
-// Valve
+// Клапан
 let valve;
+
+const valveOpenPos = posY + 1.5;
+const valveClosePos = posY + 1.43;
+
 let valvePosX = posX + 0.26;
-let valvePosY = posY + 1.45;
+let valvePosY = valveClosePos;
 let valvePosZ = -0.54;
 
-const valveOpenPos = valvePosY + 0.03;
-const valveClosedPos = valvePosY;
+
 loader.load('source/Valve.gltf', function(gltf){
     valve = gltf.scene;
     scene.add(gltf.scene);
@@ -123,7 +117,7 @@ loader.load('source/Valve.gltf', function(gltf){
     valve.rotation.set( rotationX, 0, 0);
 });
 
-// Switch object
+// Корпус кнопки вкл/выкл
 let Button;
 
 let buttonPosX = posX + 2.2;
@@ -138,6 +132,7 @@ loader.load('source/Switch.gltf', function(gltf){
     Button.rotation.set( rotationX, 0, 0);
 });
 
+// Переключатель в кнопке
 let toggle;
 const toogleSpeed = 0.03;
 
@@ -145,8 +140,8 @@ let togglePosX = buttonPosX;
 let togglePosY = buttonPosY;
 let togglePosZ = buttonPosZ;
 
-const  toggleOn = buttonPosY + 0.215;
-const  toggleOff = buttonPosY + 0.01;
+const  toggleOnPosY  = buttonPosY + 0.215;
+const  toggleOffPosY = buttonPosY + 0.01;
 
 loader.load('source/Switcher.gltf', function(gltf){
     toggle = gltf.scene;
@@ -156,103 +151,51 @@ loader.load('source/Switcher.gltf', function(gltf){
     toggle.rotation.set( rotationX, 0, 0);
 });
 
-//
-document.getElementById('turnOnOffCompress').onclick = function() {
-    switchButton();
+let isToggleOn = false;
+let compressAlert = document.getElementById("compressAlert");
+
+// Вкл/выкл компрессора
+document.getElementById('toggleBtn').onclick = function () {toggleButton();}
+function toggleButton() { if (isToggleOn) toggleOff(); else toggleOn();}
+
+function toggleOn()  { isToggleOn = true; }
+
+function toggleOff() { isToggleOn = false; }
+
+let isValveOpen = false;
+
+// Быстрое открытие и закрытие клапана
+document.getElementById('dropThePressure').onclick = function() { openValve(); }
+
+let valveAlert = document.getElementById('valveAlert');
+// Спуск давления из системы
+document.getElementById('relievePressure').onclick = function() { openCloseValve(); }
+function openCloseValve() {
+    if (isValveOpen) closeValve();
+    else openValve();
+    pressurePhysic3 = stdPressure;
 }
 
-function switchButton() {
-    isCompressOn = !isCompressOn;
-    setCompressAlert();
-    if (isCompressOn) {
-        compressOnSound.play();
-    }
-    else {
-        compressOnSound.stop();
-    }
+
+function openValve() {
+    if (isValveOpen) return; // Открыть можно только закрытый
+    isValveOpen = true;
+    valveAlert.innerHTML = 'открыт';
+    compressOffSound.play();
+
+    temperaturePhysic2 = tempraturePhisyc / Math.pow(( actualPressure / stdPressure), farengateCoef);
+    pressurePhysic3 = (stdPressure * tempraturePhisyc) / temperaturePhysic2 + getRandomNumber(-3, 3); // +- 3 погрешность
 }
 
-let dropPress = false;
-document.getElementById('dropThePressure').onclick = function() {
-    // open Valve
-    dropPress = true;
-    setValveAlert();
-    switchSound();
+function closeValve() {
+    if (!isValveOpen) return; // Закрыть можно только открытый
+    isValveOpen = false;
+    valveAlert.innerHTML = 'закрыт';
+    compressOffSound.stop();
 }
-
-
-let valveAlert = document.getElementById("valveAlert");
-function setValveAlert() {
-    if (dropPress)
-        valveAlert.innerHTML = 'открыт';
-    else 
-        valveAlert.innerHTML = 'закрыт';
-
-}
-
-function switchSound() {
-    if (dropPress)
-        compressOffSound.play();
-    else
-        compressOffSound.stop();
-}
-
-// Light and Camera and Sound
-
-camera.position.set( 0, 0, 2);
-camera.rotation.set( 0, 0, 0);
-
-let light = new THREE.DirectionalLight(0xffffff, 0.5);
-light.position.setScalar(10);
-scene.add(light);
-scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-//
-
-scene.background = new THREE.Color(0xffffff);
-
-const listener = new THREE.AudioListener();
-camera.add( listener );
-
-// create a global audio source
-const compressOnSound = new THREE.Audio( listener );
-const compressOffSound = new THREE.Audio( listener );
-
-// load a sound and set it as the Audio object's buffer
-const audioLoader = new THREE.AudioLoader();
-audioLoader.load( 'source/compressOn.wav', function( buffer ) {
-	compressOnSound.setBuffer( buffer );
-	compressOnSound.setLoop( true );
-	compressOnSound.setVolume( 0.3 );
-});
-
-audioLoader.load( 'source/compressOff.mp3', function( buffer ) {
-	compressOffSound.setBuffer( buffer );
-	compressOffSound.setLoop( true );
-	compressOffSound.setVolume( 0.3 );
-});
-
-// Controls
-let controls = new EditorControls( camera, renderer.domElement);
-
-
-let mouse = new THREE.Vector2();
-
-
-// mouse listener
-document.addEventListener( 'mousedown', function( event ) {
-
-}, false );
 
 function getRandomNumber(min, max) {
     return Math.random() * (max - min) + min;
-}
-
-let compressAlert = document.getElementById("compressAlert");
-function setCompressAlert() {
-    if (isCompressOn)
-        compressAlert.innerHTML = "включён";
-    else 
-        compressAlert.innerHTML = "выключён";
 }
 
 let pressureAlert = document.getElementById("pressureAlert");
@@ -265,103 +208,110 @@ function convertRadsToPressure(radians) {
     radians = Math.abs(radians);
 
     // start at 0
-    radians -= PI/2;
+    radians -= Math.PI/2;
 
     // convert from rads to degress
     return Math.floor(radians * 57);
 }
 
 function convertPressureToRads(pressure) {
-    let radians = -(pressure / 57) - PI/2;
-    return radians;
+    return -(pressure / 57) - Math.PI/2;
 }
 
+let isCompressOn = false;
+function turnCompressOn() {
+    if (isCompressOn) return;   // включить можно только выключенный
+    isCompressOn = true;
+    compressAlert.innerHTML = "включён";
+    compressOnSound.play();
+}
+
+function turnCompressOff() {
+    if (!isCompressOn) return;  // выключить можно только включенный
+    isCompressOn = false;
+    compressAlert.innerHTML = "выключён";
+    compressOnSound.stop();
+}
+
+const stdPressure = 760;
+const maxPressure = stdPressure + 250;
+const tempraturePhisyc = 297;
+const farengateCoef = 0.2857;
+let actualPressure = stdPressure;
+let pressurePhysic3 = stdPressure;
+let temperaturePhysic2;
 let preessureAtDegrees = 0;
 
-let frameTime = Date.now(); 
-// Actions
-
+let frameTime = Date.now();
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
 
+    if (!turbineIsLoaded) return;
+
     let delta = Date.now() - frameTime;
+    let pressureSpeed = delta * 0.01;
+    let animationSpeed = delta * 0.0005;
     frameTime = Date.now();
+
+    // Анимация (вкл) переключателя и условие включения компрессора
+    if (isToggleOn) {
+        if (togglePosY <= toggleOnPosY) togglePosY += animationSpeed;
+        else turnCompressOn();
+    }
+    // Анимация (выкл) переключателя и условие выключения компрессора
+    else if (togglePosY >= toggleOffPosY) togglePosY -= animationSpeed;
+    else  turnCompressOff();
     
-    // increase pressure 
+    // Включенный комперессор
     if (isCompressOn) {
-        if (togglePosY <= toggleOn) {
-            togglePosY += toogleSpeed;
-            toggle.position.set( togglePosX, togglePosY, togglePosZ);
-        }
-
-        else if (arrowAngle > -2 * PI -PI/5) {
-            setPressureAlert(convertRadsToPressure(arrowAngle));
-
-            arrowAngle -= delta * getRandomNumber(0.0001, 0.0004);
-            arrow.rotation.set( rotationX, arrowAngle, 0);
-
-            pressurePhisic2 = convertRadsToPressure(arrowAngle) + pressurePhisic1;
-
-            turbineAngle += 0.1;
-            turbine.rotation.set( turbineAngle, 0, 0);
-        }
-        else {
-            switchButton();
-        }
-    }
-    else if (togglePosY >= toggleOff) {
-        togglePosY -= toogleSpeed;
-        toggle.position.set( togglePosX, togglePosY, togglePosZ);
-        
+       actualPressure += pressureSpeed; // Рост давления
+       turbineAngle += 0.1;             // Поворот турбины
     }
 
-    if (!dropPress && !isCompressOn && arrowAngle > preessureAtDegrees) {
-        arrowAngle -= delta * getRandomNumber(0.0001, 0.0005);
-        arrow.rotation.set( rotationX, arrowAngle, 0);
-        setPressureAlert(convertRadsToPressure(arrowAngle));
+    // Открытый клапан    
+    if (isValveOpen) {
+        if (valvePosY < valveOpenPos) valvePosY += animationSpeed; // Анимация открытия клапана
+        actualPressure -= pressureSpeed * 4;    // Падение давления 
     }
+    else if (valvePosY > valveClosePos) { 
+        valvePosY -= animationSpeed;            // Анимация закрытия клапана
+        actualPressure -= pressureSpeed * 4;    // Падение давления, пока клапан не закрыт
+    } else closeValve();
 
-    if (dropPress) {
-        // degreess pressure to null -- set arrow degreess //
-        if (arrowAngle <= -PI/2) {
-            
-            // only then valve is at open position //
-            if (valvePosY <= valveOpenPos) {
-                valvePosY += 0.03;
-                valve.position.set(valvePosX, valvePosY, valvePosZ);
-            }
-            else {
-                setPressureAlert(convertRadsToPressure(arrowAngle));
-                arrowAngle += delta * getRandomNumber(0.0009, 0.0012);
-                arrow.rotation.set( rotationX, arrowAngle, 0);
-            }
-        }
-        // then arrow at null calculate pressure3 //
-        else{
-            arrowAngle = -PI / 2;
-            arrow.rotation.set( rotationX, arrowAngle, 0);
+    if (actualPressure < pressurePhysic3) actualPressure += pressureSpeed;
 
-            temperaturePhisyc2 = tempraturePhisyc / Math.pow(( pressurePhisic2 / pressurePhisic1), coef);
-            pressurePhisic3 = (pressurePhisic1 * tempraturePhisyc) / temperaturePhisyc2 - pressurePhisic1;
-            // +- 3 погрешность //
-            pressurePhisic3 += getRandomNumber(-3, 3);
-
-            preessureAtDegrees = convertPressureToRads(pressurePhisic3);
-            console.log(pressurePhisic3);
-            dropPress = false;
-        }
+    // превышение(понижения) максимального(минимального) давления
+    if (actualPressure < stdPressure) {
+        actualPressure = stdPressure;
+        closeValve();
     }
-    else {
-        setValveAlert();
-        switchSound();
-        
-        // close valve
-        if (valvePosY > valveClosedPos) {
-            valvePosY -= 0.04;
-            valve.position.set(valvePosX, valvePosY, valvePosZ);
-        }
+    if (actualPressure > maxPressure) {
+        actualPressure = maxPressure;
+        toggleOff();
     }
-
+    updateAnimations(animationSpeed);
 }
 animate();
+
+
+function updateAnimations(animationSpeed) {
+    // Обновление позиции стрелки монометра в соответствии с давлением в системе
+    let actualRads = convertPressureToRads(actualPressure - stdPressure);
+    if (arrowAngleY > actualRads) arrowAngleY -= animationSpeed * 1.4;
+    else arrowAngleY += animationSpeed * 1.2;
+
+    arrow.rotation.set( rotationX, arrowAngleY, 0);
+    
+    // Обновление статуса в таблице
+    setPressureAlert((actualPressure - stdPressure).toFixed(0));
+    
+    // Поворот турбины
+    turbine.rotation.set( turbineAngle, 0, 0);
+    
+    // Обновляем положение клапана
+    valve.position.set(valvePosX, valvePosY, valvePosZ);
+
+    // Обновляем положение переключателя
+    toggle.position.set( togglePosX, togglePosY, togglePosZ);
+}

@@ -33,20 +33,10 @@
         <div class="container">
             <div class="instruct_block">
                 <ul class="list-group list-group-flush mb-5">
-                    <li class="list-group-item">При закрытом клапане накачать воздух в сосуд так, чтобы измеряемое манометром избыточное давление стало
+                    <li class="list-group-item">При закрытом клапане, включить компрессор (кнопка "Вкл/выкл космпрессор") накачать воздух в сосуд так, чтобы измеряемое манометром избыточное давление стало
                         равным 100 – 130 мм. рт. ст.</li>
-                    <li class="list-group-item">Через некоторое время, когда давление перестанет падать, записать в таблицу величину давления ΔР<sub>1</sub></li>
-                    <li class="list-group-item">Открыть на мгновение клапан сосуда и, когда стрелка манометра упадет до нуля, быстро закрыть его. Через
-                        некоторое время, когда давление перестанет расти, записать величину давления ΔР<sub>3</sub> в таблицу</li>
-                    <li class="list-group-item">Повторить предыдущие пункты пять раз.</li>
-                    <li class="list-group-item">По формуле <img src="source/formula1.png" alt="image doesn't load"/> рассчитать коэффициент Пуассона для каждого опыта. Вычислить среднее значение
-                        коэффициента Пуассона γ<sub>ср</sub></li>
-                    <li class="list-group-item">Найти теоретическое значение коэффициента Пуассона теор для воздуха, считая его молекулы жесткими
-                        двухатомными (указание: воспользоваться определениями коэффициента Пуассона и молярных теплоемкостей при
-                        постоянном объеме и давлении)</li>
-                    <li class="list-group-item">равнить теоретическое и среднее экспериментальное значения коэффициента Пуассона, оценив величину
-                        относительного отклонения по формуле <img src="source/formula2.png" alt="image doesn't load"/></li>
-                    <img class="table text-center" src="source/table.png" alt="image doesn't load"/>
+                    <li class="list-group-item">Открыть клапан сосуда (кнопка "Сброс"), когда стрелка манометра упадет до нуля, клапан закроется автоматически, давление начнет расти, когда рост прекратится, записать величину давления ΔР<sub>3</sub> в таблицу</li>
+                    <li class="list-group-item">Повторить опыт 5 раз. Обработать результаты, используя методические указания.</li>
                 </ul>
             </div>
         </div>
@@ -78,11 +68,14 @@
                 </div>
             </div>
             <div class="row text-center m-5">
-                <div class="col-lg-6 col-12 mb-4">
-                    <div class="btn btn-primary" id="turnOnOffCompress">Вкл/выкл компрессор</div>
+                <div class="col-lg-4 col-12 mb-4">
+                    <div class="btn btn-primary" id="toggleBtn">Вкл/выкл компрессор</div>
                 </div>
-                <div class="col-lg-6 col-12 mb-4">
-                    <div class="btn btn-primary" id="dropThePressure">Сбросить давление</div>
+                <div class="col-lg-4 col-12 mb-4">
+                    <div class="btn btn-primary" id="dropThePressure">Сброс</div>
+                </div>
+                <div class="col-lg-4 col-12 mb-4">
+                    <div class="btn btn-primary" id="relievePressure">Спустить давление</div>
                 </div>
             </div>
         </div>
@@ -107,6 +100,7 @@
 <script type="module" src="./js/EditorControls.js"></script>
 <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
 
+<script src="./js/instruction.js"></script>
 <script type="module" src="./js/backend.js"></script>
 
 </script>
