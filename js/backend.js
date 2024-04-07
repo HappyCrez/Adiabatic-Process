@@ -297,11 +297,7 @@ animate();
 
 function updateAnimations(animationSpeed) {
     // Обновление позиции стрелки монометра в соответствии с давлением в системе
-    let actualRads = convertPressureToRads(actualPressure - stdPressure);
-    if (arrowAngleY > actualRads) arrowAngleY -= animationSpeed * 1.4;
-    else arrowAngleY += animationSpeed * 1.2;
-
-    arrow.rotation.set( rotationX, arrowAngleY, 0);
+    arrow.rotation.set( rotationX, convertPressureToRads(actualPressure - stdPressure), 0);
     
     // Обновление статуса в таблице
     setPressureAlert((actualPressure - stdPressure).toFixed(0));
