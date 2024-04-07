@@ -169,7 +169,7 @@ document.getElementById('dropThePressure').onclick = function() { openValve(); }
 
 let valveAlert = document.getElementById('valveAlert');
 // Спуск давления из системы
-document.getElementById('relievePressure').onclick = function() { openCloseValve(); }
+document.getElementById('reset').onclick = function() { openCloseValve(); }
 function openCloseValve() {
     if (isValveOpen) closeValve();
     else openValve();
@@ -240,7 +240,6 @@ const farengateCoef = 0.2857;
 let actualPressure = stdPressure;
 let pressurePhysic3 = stdPressure;
 let temperaturePhysic2;
-let preessureAtDegrees = 0;
 
 let frameTime = Date.now();
 function animate() {
